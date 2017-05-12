@@ -42,7 +42,7 @@ app.get('/getforms', function (req, res) {
         //var formsArray = response.forms;
         //var exampleForm = forms[0];
 
-        res.json({ forms: response, msg: 'that worked' });
+        res.json({ forms: response, msg: 'Return something' });
         //return callback(undefined, formsArray);
       });
 });
@@ -54,7 +54,7 @@ app.get('/getform', function (req, res) {
   }, function (err, form) {
     console.log(err);
     console.log(form);
-    res.json({ form: form, msg: 'that worked', });
+    res.json({ form: form, msg: 'Return something', });
   })
 });
 
@@ -69,7 +69,7 @@ app.get('/getPopulatedFormList', function (req, res) {
       res.json(err);
     }
     //A JSON object describing a full form object.
-    res.json({ form: arrayOfForms, msg: 'that worked', });
+    res.json({ form: arrayOfForms, msg: 'Return something', });
     //return callback(undefined, arrayOfForms);//this never works
   });
 });
@@ -89,7 +89,7 @@ app.get('/getSubmissions', function (req, res) {
 
     //An Object Containing An Array of JSON objects describing a full Submission object.
     //return callback(undefined, submissionsObject);
-    res.json({ form: submissionsObject, msg: 'that worked' });
+    res.json({ form: submissionsObject, msg: 'Return something' });
   });
 });
 
@@ -100,7 +100,7 @@ app.get('/getSubmission', function (req, res) {
   }, function (err, submission) {
     if (err) console.log(err);
 
-    res.json({ submission: submission, msg: 'that worked' });
+    res.json({ submission: submission, msg: 'Return something' });
     //return callback(undefined, submission);
   });
 });
@@ -123,7 +123,7 @@ app.get('/getSubmissionFile', function (req, res) {
     //Pipe the file stream to a writable stream (for example, a FileWriter)
 
     fileStreamObject.stream.pipe(res);//this is returning an error but may be because I am not sure what fileGroupId is
-    res.json(fileStreamObject.stream);
+    res.json(fileStreamObject.stream);//sent this to see if it was sending anything
     //fileStreamObject.stream.resume();
   });
 });
@@ -211,17 +211,17 @@ app.get('/getSubmissionStatus', function (req, res) {
 app.get('/submitFormFile', function (req, res) {
   var options = {
     "submission": {
-      "fileId": "filePlaceHolder095f2c4317e13741f8eadff5eb688572",
-      "fieldId": "58af0c13ed4560ba675e31d6",
-      "submissionId": "591448ca78f1aff97e8b537d",
+      "fileId": "filePlaceHolderc5276aea8488adf066229ca4f5490467.png",
+      "fieldId": "58af0c13ed4560ba675e31d7",
+      "submissionId": "5915692b61ad0a815603c1a6",
       "fileStream": '/home/acunningham/Pictures/Agile1.png',
-      "keepFile": true
+      "keepFile": false
     }
   }
 
   mbaasApi.forms.submitFormFile(options, function (err, submitFileResult) {
     console.log(submitFileResult);
-    res.json({ 'submitFileResult': submitFileResult, 'Error': err, 'msg': 'passed' });
+    res.json({ 'submitFileResult': submitFileResult, 'Error': err, 'msg': 'returned something' });
   });
 });
 
@@ -511,7 +511,7 @@ app.get ('/submissionError', function(req, res){
 
 
 //3.15. $fh.forms.deregisterListener ...18
-app.get('/deregisterListner', function(req, res){
+app.get('/deregisterListener', function(req, res){
   //NodeJS Events Module. Note, this is required to register event emitter objects to forms.
   var events = require('events');
   var submissionEventListener = new events.EventEmitter();
