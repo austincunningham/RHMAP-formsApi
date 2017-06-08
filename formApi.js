@@ -9,6 +9,7 @@ var express = require('express');
 var mbaasExpress = mbaasApi.mbaasExpress();
 var cors = require('cors');
 var fs = require('fs');
+var request = require('request');
 
 
 
@@ -17,8 +18,8 @@ var securableEndpoints;
 securableEndpoints = ['/hello'];
 
 var params = {
-  "submissionId": "59098a913f6bbeef37325b0a",//"<<24-character submission ID>>",
-  "submissionStartedTimestamp": "2017-05-18T10:37:55.903Z" //"<<2015-02-04T19:18:58.746Z>>"
+  "submissionId": "5937be97ea011b0100eb92f2",//"<<24-character submission ID>>",
+  "submissionStartedTimestamp": "Wed Jun 07 2017 08:51:37 GMT+0000 (UTC)" //"<<2015-02-04T19:18:58.746Z>>"
 };
 
 var app = express();
@@ -33,7 +34,7 @@ app.use('/mbaas', mbaasExpress.mbaas);
 
 //3.1. $fh.forms.getForms (passed) ...1
 app.get('/getforms', function (req, res) {
-  var options = { "_id": "5909d918a036c2f5265d62ac" };
+  var options = { "_id": "5937bb32614bc20100364d3d" };
   mbaasApi.forms.getForms(options,
       function (err, response) {
         //if (err) return handleError(err);
@@ -50,7 +51,7 @@ app.get('/getforms', function (req, res) {
 // 3.2. $fh.forms.getForm (passed) ...2
 app.get('/getform', function (req, res) {
   mbaasApi.forms.getForm({
-    "_id": '59098a913f6bbeef37325b0a'
+    "_id": '5939076e74740101005b3269'
   }, function (err, form) {
     console.log(err);
     console.log(form);
@@ -63,7 +64,7 @@ app.get('/getform', function (req, res) {
 // 3.3 $fh.forms.getPopulatedFormList (passed)...3
 app.get('/getPopulatedFormList', function (req, res) {
   mbaasApi.forms.getPopulatedFormList({
-    "formids": ['59098a913f6bbeef37325b0a', '5643177f3d01db830dcf4660']
+    "formids": ['5937bb32614bc20100364d3d']
   }, function (err, arrayOfForms) {
     if (err) {
       res.json(err);
@@ -82,8 +83,8 @@ app.get('/getPopulatedFormList', function (req, res) {
 
 app.get('/getSubmissions', function (req, res) {
   mbaasApi.forms.getSubmissions({
-    "forId": ['59098a913f6bbeef37325b0a'],
-    "subid": ['5909d918a036c2f5265d62ac']
+    "forId": ['5937bb32614bc20100364d3d'],
+    "subid": ['5937be97ea011b0100eb92f2']
   }, function (err, submissionsObject) {
     if (err) return handleError(err);
 
@@ -96,7 +97,7 @@ app.get('/getSubmissions', function (req, res) {
 // 3.5. $fh.forms.getSubmission (passed)...5
 app.get('/getSubmission', function (req, res) {
   mbaasApi.forms.getSubmission({
-    "submissionId": "591d798361a519204b678e21"
+    "submissionId": "593814979e6fbe010057b1e2"
   }, function (err, submission) {
     if (err) console.log(err);
 
@@ -111,9 +112,32 @@ app.get('/getSubmission', function (req, res) {
 // stream: <Readable File Stream>
 // }
 
+app.get('/downloadfile', function(req, res) {
+
+  var ts = Date.now();
+  var fileName = 'test' + ts;
+  var filePath = '/tmp/' + fileName + '.jpg';
+
+  var writestream = fs.createWriteStream(filePath);
+
+  writestream.on('close', function() {
+    res.json({status: "done", fileName: fileName});
+  });
+
+  writestream.on('error', function(err) {
+    res.json({status: 'error', error: err});
+  });
+
+  request('https://regmedia.co.uk/2013/06/26/red_hat_logo.jpg?x=1200&y=794').pipe(writestream);
+
+
+
+
+});
+
 app.get('/getSubmissionFile', function (req, res) {
   mbaasApi.forms.getSubmissionFile({
-    "_id": "591d7984a25e591b4b1d7fde"//fileGroupID ??
+    "_id": "5937be97ea011b0100eb92f2"//fileGroupID ??
   }, function (err, fileStreamObject) {
     if (err) {
       return handleError(err);
@@ -161,30 +185,55 @@ app.get('/getAppClientConfig', function (req, res) {
 app.get('/submitFormData', function (req, res) {
   var options = {
     "submission": {
-      "formId": "59098a913f6bbeef37325b0a",
-      "deviceId": "5CA646213AD44B46B862D24994B6B517",
+      "_type": "submission",
+      "_ludid": "5939076e74740101005b3269_submission_1496910877903",
+      "_localLastUpdate": "2017-06-08T08:34:37Z",
+      "formName": "camera-form-14500",
+      "formId": "5939076e74740101005b3269",
+      "deviceFormTimestamp": 1496909713881,
+      "createDate": "2017-06-08T08:34:37Z",
+      "timezoneOffset": -60,
+      "appId": "ioxezt363kr3dtwdpbuk246a",
+      "appCloudName": "",
+      "deviceIPAddress": "",
+      "comments": [
+
+      ],
       "formFields": [
         {
-          "fieldId": "59098a913f6bbeef37325b06",
+          "fieldId": "5939078e74740101005b326a",
           "fieldValues": [
-            "test2"
+            {
+              "fileName": "filePlaceHolderf5a80b0606ff1df12f4c1bf09b141e70.jpeg",
+              "hashName": "filePlaceHolderf5a80b0606ff1df12f4c1bf09b141e70",
+              "contentType": "base64",
+              "fileSize": 181819,
+              "fileType": "image/jpeg",
+              "imgHeader": "data:image/jpeg;base64,",
+              "fileUpdateTime": 1496910898569,
+              "fieldId": "5939078e74740101005b326a"
+            }
           ]
         }
       ],
-      "deviceIPAddress": "149.11.36.106",
-      "deviceFormTimestamp": "2017-05-03T09:03:14.404Z",
-      "comments": [{
-        "madeBy": "austin",
-        "madeOn": "12/11/17",
-        "value": "This is a comment"
-      }]
+      "saveDate": null,
+      "submitDate": "2017-06-08T08:34:58Z",
+      "uploadStartDate": "2017-06-08T08:34:58Z",
+      "submittedDate": null,
+      "userId": null,
+      "filesInSubmission": [
+        "filePlaceHolderf5a80b0606ff1df12f4c1bf09b141e70"
+      ],
+      "deviceId": "A200CC72B96946148950EC1EB0FE688B",
+      "status": "inprogress",
+      "uploadTaskId": "5939076e74740101005b3269_submission_1496910877903_uploadTask"
     },
-    "appClientId": 'zul5kkz7spjoiqqysiy3grwg'
+    "appClientId": 'ioxeztyb27bezjkgicy2yf73'//guid
   };
 
   mbaasApi.forms.submitFormData(options, function (err, data) {
     console.log(data, err);
-    res.json({ 'data': data, 'Error': err, 'msg': 'passed' });
+    res.json({ 'data': data, 'Error': err, 'msg': 'return something' });
   });
 });
 
@@ -193,7 +242,7 @@ app.get('/getSubmissionStatus', function (req, res) {
   var options = {
     submission: {
       //This is the submission ID returned when the $fh.forms.submitFormData function returns.
-      submissionId: "591d6f4aa001dc331213d570"
+      submissionId: "5937be97ea011b0100eb92f2"
     }
   };
 
@@ -208,13 +257,15 @@ app.get('/getSubmissionStatus', function (req, res) {
 
 
 //3.11. $fh.forms.submitFormFile ...11
-app.get('/submitFormFile', function (req, res) {
+app.get('/submitFormFile/:submissionid/:filename', function (req, res) {
+
+
   var options = {
     "submission": {
-      "fileId": "filePlaceHolder65fb08b8604453c9219cf8ecd7ce8e0e",
-      "fieldId": "591d78226a32ffd77674922e",
-      "submissionId": "591d798361a519204b678e21",
-      "fileStream": '/home/acunningham/Pictures/Agile1.png',
+      "fileId": "filePlaceHolderf5a80b0606ff1df12f4c1bf09b141e70",
+      "fieldId": "5939078e74740101005b326a",
+      "submissionId": req.params.submissionid,
+      "fileStream": '/tmp/' + req.params.filename + ".jpg",
       "keepFile": true
     }
   }
@@ -226,10 +277,10 @@ app.get('/submitFormFile', function (req, res) {
 });
 
 //3.12. $fh.forms.completeSubmission ...12
-app.get('/completeSubmission', function (req, res) {
+app.get('/completeSubmission/:submissionid', function (req, res) {
   var options = {
     "submission": {
-      "submissionId": "591d798361a519204b678e21" //"<<The ID of the Submission to Complete>>"
+      "submissionId": req.params.submissionid //"<<The ID of the Submission to Complete>>"
     }
   }
 
@@ -246,70 +297,95 @@ app.get('/createSubmissionModel', function (req, res) {
   var options = {
     //"<<A Form JSON Object Obtained using $fh.forms.getForm>>"
     form: {
-      _id: "59098a913f6bbeef37325b0a",
-      updatedBy: "testing-admin@example.com",
-      name: "RHMAP-15000",
-      createdBy: "testing-admin@example.com",
-      description: "test",
+      _id: "5937bb32614bc20100364d3d",
+      updatedBy: "rhmap-admin@example.com",
+      name: "jb-form",
+      createdBy: "rhmap-admin@example.com",
+      description: "jb-form-no-file",
       dataTargets: [],
       subscribers: [],
       pageRules: [],
       fieldRules: [],
       pages: [
         {
-          _id: "59098a913f6bbeef37325b05",
+          _id: "5937bb32614bc20100364d3c",
           fields: [
             {
-              _id: "59098a913f6bbeef37325b06",
-              name: "Name",
+              _id: "5937bbba614bc20100364d3e",
               required: true,
               type: "text",
-              adminOnly: false,
-              repeating: false
-            },
-            {
-              _id: "59098a913f6bbeef37325b07",
-              name: "How would you rate your experience?",
-              required: true,
-              type: "radio",
+              name: "Text",
+              fieldCode: null,
               adminOnly: false,
               fieldOptions: {
-                definition: {
-                  options: [
-                    {
-                      checked: false,
-                      label: "Excellent"
-                    },
-                    {
-                      checked: false,
-                      label: "Good"
-                    },
-                    {
-                      checked: false,
-                      label: "Average",
-                      name: ""
-                    },
-                    {
-                      checked: false,
-                      label: "Fair",
-                      name: ""
-                    },
-                    {
-                      checked: false,
-                      label: "Poor",
-                      name: ""
-                    }
-                  ]
+                validation: {
+                  validateImmediately: true
                 }
               },
               repeating: false
             },
             {
+              _id: "5937bbba614bc20100364d3f",
+              required: true,
+              type: "number",
+              name: "Number",
+              fieldCode: null,
+              adminOnly: false,
+              fieldOptions: {
+                validation: {
+                  validateImmediately: true
+                }
+              },
+              repeating: false
+            },
+            {
+              _id: "5937bbba614bc20100364d44",
+              required: true,
+              type: "emailAddress",
+              name: "Email",
+              fieldCode: null,
+              adminOnly: false,
+              fieldOptions: {
+                validation: {
+                  validateImmediately: true
+                }
+              },
+              repeating: false
+            },
+            {
+              _id: "5937bbba614bc20100364d45",
+              required: true,
+              type: "textarea",
+              name: "Paragraph",
+              fieldCode: null,
+              adminOnly: false,
+              fieldOptions: {
+                validation: {
+                  validateImmediately: true
+                }
+              },
+              repeating: false
+            },
+            {
+              _id: "5937bbba614bc20100364d47",
+              required: true,
+              type: "signature",
+              name: "Signature",
+              fieldCode: null,
+              adminOnly: false,
+              fieldOptions: {
+                validation: {
+                  validateImmediately: true
+                }
+              },
+              repeating: false
+            },
+            {
+              _id: "5937bbba614bc20100364d49",
               required: true,
               type: "location",
-              name: "Where are you",
+              name: "Location",
               fieldCode: null,
-              _id: "59099c5ed615e2773827e309",
               adminOnly: false,
               fieldOptions: {
                 validation: {
@@ -322,43 +398,15 @@ app.get('/createSubmissionModel', function (req, res) {
               repeating: false
             },
             {
-              _id: "59098a913f6bbeef37325b08",
-              name: "Further Comments",
+              _id: "5937c0d9614bc20100364d52",
               required: true,
-              type: "textarea",
-              adminOnly: false,
-              repeating: false
-            },
-            {
-              _id: "591d78226a32ffd77674922e",
+              type: "url",
+              name: "Untitled",
               fieldCode: null,
-              name: "picture",
-              required: true,
-              type: "photo",
               adminOnly: false,
               fieldOptions: {
                 validation: {
                   validateImmediately: true
-                },
-                definition: {
-                  photoSource: "both",
-                  photoType: "jpeg",
-                  saveToPhotoAlbum: "true"
-                }
-              },
-              repeating: false
-            },
-            {
-              _id: "59098a913f6bbeef37325b09",
-              name: "Today's Date",
-              required: true,
-              type: "dateTime",
-              adminOnly: false,
-              fieldOptions: {
-                definition: {
-                  datetimeUnit: "datetime",
-                  timeAutopopulate: true,
-                  dateTimeFormat: "YYYY-MM-DD HH:mm:ss"
                 }
               },
               repeating: false
@@ -366,40 +414,44 @@ app.get('/createSubmissionModel', function (req, res) {
           ]
         }
       ],
-      lastUpdated: "2017-05-18T10:36:36.285Z",
-      dateCreated: "2017-05-03T07:45:44.071Z",
-      lastDataRefresh: "2017-05-18T10:36:36.285Z",
+      lastUpdated: "2017-06-07T09:01:20.093Z",
+      dateCreated: "2017-06-07T08:39:26.799Z",
+      lastDataRefresh: "2017-06-07T09:01:20.093Z",
       pageRef: {
-        "59098a913f6bbeef37325b05": 0
+        "5937bb32614bc20100364d3c": 0
       },
       fieldRef: {
-        "59098a913f6bbeef37325b06": {
+        "5937bbba614bc20100364d3e": {
           page: 0,
           field: 0
         },
-        "59098a913f6bbeef37325b07": {
+        "5937bbba614bc20100364d3f": {
           page: 0,
           field: 1
         },
-        "59099c5ed615e2773827e309": {
+        "5937bbba614bc20100364d44": {
           page: 0,
           field: 2
         },
-        "59098a913f6bbeef37325b08": {
+        "5937bbba614bc20100364d45": {
           page: 0,
           field: 3
         },
-        "591d78226a32ffd77674922e": {
+        "5937bbba614bc20100364d47": {
           page: 0,
           field: 4
         },
-        "59098a913f6bbeef37325b09": {
+        "5937bbba614bc20100364d49": {
           page: 0,
           field: 5
+        },
+        "5937c0d9614bc20100364d52": {
+          page: 0,
+          field: 6
         }
       },
-      lastUpdatedTimestamp: 1495103796285
-    }, //"<<A Form JSON Object Obtained using $fh.forms.getForm>>"
+      lastUpdatedTimestamp: 1496826080093
+    }
   };
 
   mbaasApi.forms.createSubmissionModel(options, function (err, submissionModel) {
@@ -535,8 +587,10 @@ app.get('/deregisterListener', function (req, res) {
     });
 
     //Removing the listener from the $fh.forms Cloud API.
-    mbaasApi.forms.deregisterListener(submissionEventListener);
-    res.json({ err: err, msg: "deregistered Listener" });
+    mbaasApi.forms.deregisterListener(submissionEventListener, function cb(err, data) {
+      res.json({ err: err, data: data, msg: "deregistered Listener" });
+    });
+
   });
 });
 
@@ -545,9 +599,9 @@ app.get('/deregisterListener', function (req, res) {
 app.get('/exportCSV', function (req, res) {
   // This is the input parameter to filter the list of CSV files.
   var queryParams = {
-    projectId: "zul5kk7ifvisy3r3mhcbhalj",//guid
-    submissionId: "591d798361a519204b678e21",
-    formId: ["59098a913f6bbeef37325b0a"],
+    projectId: "ioxeztyb27bezjkgicy2yf73",//guid
+    submissionId: "5937be97ea011b0100eb92f2",
+    formId: ["5937bb32614bc20100364d3d"],
     fieldHeader: "name"
   };
 
@@ -564,7 +618,7 @@ app.get('/exportCSV', function (req, res) {
 //3.17. $fh.forms.exportSinglePDF ...20
 app.get('/exportSinglePdf', function (req, res) {
   var params = {
-    submissionId: "591d798361a519204b678e21"
+    submissionId: "5937be97ea011b0100eb92f2"
   };
 
   mbaasApi.forms.exportSinglePDF(params, function (err, fileStreamObject) {
@@ -580,13 +634,10 @@ app.get('/exportSinglePdf', function (req, res) {
  * If the app is deployed on the platform,
  * this function will be ignored and the request will be forwarded
  * to the platform to perform authentication.
-
  app.use('/box', mbaasExpress.auth({localAuth: function(req, cb){
  return cb(null, {status:401, body: {"message": "bad request"}});
  }}));
-
  or
-
  app.use('/box', mbaasExpress.core({localAuth: {status:401, body: {"message": "not authorised”}}}));
  */
 
